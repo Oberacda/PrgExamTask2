@@ -21,6 +21,8 @@ public class MatchThreeBoard implements Board {
     private final Set<Token> boardTokens;
     private final List<List<Optional<Token>>> board;
 
+    private FillingStrategy boardFillingStrategy = null;
+
     /**
      * 
      * @param tokens
@@ -64,7 +66,7 @@ public class MatchThreeBoard implements Board {
         if (!containsPosition(position)) {
             throw new BoardDimensionException("Specified position is not on the board!");
         }
-        return this.board.get(position.x).get(position.y).orElse(null);
+        return this.board.get(position.y).get(position.x).orElse(null);
     }
 
     @Override
@@ -72,42 +74,90 @@ public class MatchThreeBoard implements Board {
         if (!containsPosition(position)) {
             throw new BoardDimensionException("Specified position is not on the board!");
         }
-        this.board.get(position.x).set(position.y,Optional.ofNullable(newToken));
+        this.board.get(position.y).set(position.x,Optional.ofNullable(newToken));
     }
 
     @Override
     public boolean containsPosition(Position position) {
-        return position.x <= getRowCount() && position.y <= getColumnCount();
+        return position.x >= 0
+                && position.y >= 0
+                && position.y <= getRowCount() - 1
+                && position.x <= getColumnCount()- 1;
     }
 
     @Override
     public Set<Position> moveTokensToBottom() {
-        throw new UnsupportedOperationException();
+        Set<Position> changedPositions = new LinkedHashSet<>();
+        for (int i = 0; i < getColumnCount(); i++) {
+            for (int k = getRowCount() - 2; k >= 0; k--) {
+                for (int j = k; j >= 0; j--) {
+                    Optional<Token> cnt = this.board.get(j).get(i);
+                    Optional<Token> nxt = this.board.get(j + 1).get(i);
+                    if (!nxt.isPresent() && cnt.isPresent()) {
+                        this.board.get(j).set(i, Optional.empty());
+                        this.board.get(j + 1).set(i, cnt);
+                        changedPositions.add(new Position(i, j));
+                        changedPositions.add(new Position(i, j + 1));
+                    }
+                }
+            }
+        }
+        return changedPositions;
     }
 
     @Override
     public void swapTokens(Position positionA, Position positionB) throws BoardDimensionException {
-        throw new UnsupportedOperationException();
+        Token tokenA = getTokenAt(positionA);
+        Token tokenB = getTokenAt(positionB);
+        setTokenAt(positionA, tokenB);
+        setTokenAt(positionB, tokenA);
     }
 
     @Override
     public void removeTokensAt(Set<Position> positions) throws BoardDimensionException {
-        throw new UnsupportedOperationException();
+        if (!positions.parallelStream().allMatch(this::containsPosition)) {
+            throw new BoardDimensionException("position is not on board!");
+        }
+        for (Position p : positions) {
+            setTokenAt(p, null);
+        }
     }
 
     @Override
     public void setFillingStrategy(FillingStrategy strategy) {
-        throw new UnsupportedOperationException();
+        this.boardFillingStrategy = strategy;
     }
 
     @Override
     public void fillWithTokens() throws NoFillingStrategyException {
-        throw new UnsupportedOperationException();
+        Optional<FillingStrategy> strategy = Optional.ofNullable(this.boardFillingStrategy);
+        if (strategy.isPresent()) {
+            strategy.get().fill(this);
+        } else {
+            throw new NoFillingStrategyException();
+        }
     }
 
     @Override
     public String toTokenString() {
-        throw new UnsupportedOperationException();
+        String result = "";
+        for (List<Optional<Token>> rows : this.board) {
+            String row = "";
+            for (Optional<Token> tokenOptional: rows){
+                if (tokenOptional.isPresent()) {
+                    row += tokenOptional.get().toString();
+                } else {
+                    row += "\u0020";
+                }
+            }
+            result += row + ";";
+        }
+        return result.substring(0, result.length() - 1);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("\"%s\"", toTokenString());
     }
 
     private static List<List<Optional<Token>>> getBoardFromString(final Set<Token> tokens, final String boardString) {
@@ -124,7 +174,7 @@ public class MatchThreeBoard implements Board {
             throw new IllegalArgumentException("parsing error during board contruction!");
         }
 
-        if (rows.parallelStream().noneMatch(s -> s.length() <= minBoardSize) || rows.size() < minBoardSize) {
+        if (rows.parallelStream().anyMatch(s -> s.length() < minBoardSize) || rows.size() < minBoardSize) {
             throw new BoardDimensionException(String.format("provided board is smaller than %1$dx%1$d fields!"
                     , minBoardSize));
         }

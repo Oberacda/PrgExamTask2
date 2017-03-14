@@ -3,41 +3,36 @@ package edu.kit.informatik.matchthree;
 import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 import edu.kit.informatik.matchthree.framework.interfaces.MoveFactory;
+import edu.kit.informatik.matchthree.moves.*;
 
 /**
  *
  */
 public class MoveFactoryImplementation implements MoveFactory {
-    /**
-     * 
-     */
-    public MoveFactoryImplementation() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public Move flipRight(Position position) {
-        throw new UnsupportedOperationException();
+        return new FilpRightMove(position);
     }
 
     @Override
     public Move flipDown(Position position) {
-        throw new UnsupportedOperationException();
+        return new FilpDownMove(position);
     }
 
     @Override
     public Move rotateSquareClockwise(Position position) {
-        throw new UnsupportedOperationException();
+        return new RotateSquareClockwiseMove(position);
     }
 
     @Override
     public Move rotateColumnDown(int columnIndex) {
-        throw new UnsupportedOperationException();
+        return new RotateColumnDownMove(columnIndex);
     }
 
     @Override
     public Move rotateRowRight(int rowIndex) {
-        throw new UnsupportedOperationException();
+        return new RotateRowRightMove(rowIndex);
     }
 
 }
