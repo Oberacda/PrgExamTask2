@@ -10,15 +10,49 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * {@link Move} that allows to switch two tokens that are underneath/above the other one.
+ * <p>
+ * This move switches the {@link edu.kit.informatik.matchthree.framework.Token Token} at
+ * the given {@link Position} with the one directly underneath it.
+ * </p>
+ * <p>
+ * If one of the {@link Position} isn't on the board given for the application,
+ * this move isn't applicable.
+ * </p>
+ * <p>
+ * For this move, {@code Move.apply(board)} and {@code Move.reverse().apply(board)} return the same result!
+ * </p>
+ *
  * @author David Oberacker
+ * @version 1.0.0
  */
-public class FilpDownMove implements Move {
+public class FlipDownMove implements Move {
+    /**
+     * The position given to the move.
+     */
     private final Position positionA;
+    
+    /**
+     * The position direcly underneath {@link FlipDownMove#positionA}.
+     * <p>
+     * ({@literal positionA + "(0,1)" -> positionB})
+     * </p>
+     */
     private final Position positionB;
 
-    public FilpDownMove(final Position position) {
+    /**
+     * Creates a new instance of the {@link FlipDownMove Move}.
+     * <p>
+     * The given position should not be {@code null}.
+     * </p>
+     *
+     * @param position
+     *         a not-null position, that is the base for this
+     *         move. All other required positions are dependent on this position.
+     */
+    public FlipDownMove(final Position position) {
         this.positionA = position;
-        this.positionB = position.plus(new Delta(1,0));
+        this.positionB = position.plus(new Delta(0, 1));
     }
 
     /**
@@ -49,7 +83,7 @@ public class FilpDownMove implements Move {
         if (canBeApplied(board)) {
             board.swapTokens(positionA, positionB);
         } else {
-            throw new BoardDimensionException("position not on board!");
+            throw new BoardDimensionException("One of the positions is not on board!");
         }
     }
 
@@ -64,7 +98,7 @@ public class FilpDownMove implements Move {
      */
     @Override
     public Move reverse() {
-        return new FilpDownMove(positionA);
+        return new FlipDownMove(positionA);
     }
 
     /**

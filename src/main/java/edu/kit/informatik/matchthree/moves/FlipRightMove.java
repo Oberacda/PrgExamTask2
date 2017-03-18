@@ -10,16 +10,50 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * {@link Move} that allows to switch two tokens that are right/left to the other one.
+ * <p>
+ * This move switches the {@link edu.kit.informatik.matchthree.framework.Token Token} at
+ * the given {@link Position} with the one directly right of it.
+ * </p>
+ * <p>
+ * If one of the {@link Position} isn't on the board given for the application,
+ * this move isn't applicable.
+ * </p>
+ * <p>
+ * For this move, {@code Move.apply(board)} and {@code Move.reverse().apply(board)} return the same result!
+ * </p>
+ *
  * @author David Oberacker
+ * @version 1.0.0
  */
-public class FilpRightMove implements Move {
+public class FlipRightMove implements Move {
 
+    /**
+     * The position given to the move.
+     */
     private final Position positionA;
+
+    /**
+     * The position direcly underneath {@link FlipDownMove#positionA}.
+     * <p>
+     * ({@literal positionA + "(1,0)" -> positionB})
+     * </p>
+     */
     private final Position positionB;
 
-    public FilpRightMove(final Position position) {
+    /**
+     * Creates a new instance of the {@link FlipRightMove Move}.
+     * <p>
+     * The given position should not be {@code null}.
+     * </p>
+     *
+     * @param position
+     *         a not-null position, that is the base for this
+     *         move. All other required positions are dependent on this position.
+     */
+    public FlipRightMove(final Position position) {
         this.positionA = position;
-        this.positionB = position.plus(new Delta(0,1));
+        this.positionB = position.plus(new Delta(1,0));
     }
 
     /**
@@ -65,7 +99,7 @@ public class FilpRightMove implements Move {
      */
     @Override
     public Move reverse() {
-        return new FilpRightMove(positionA);
+        return new FlipRightMove(positionA);
     }
 
     /**

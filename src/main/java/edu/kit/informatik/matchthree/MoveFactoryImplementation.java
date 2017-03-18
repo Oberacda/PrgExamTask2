@@ -6,18 +6,27 @@ import edu.kit.informatik.matchthree.framework.interfaces.MoveFactory;
 import edu.kit.informatik.matchthree.moves.*;
 
 /**
+ * A MoveFactoryImplementation proides {@link Move move's}
+ * for {@link edu.kit.informatik.matchthree.framework.interfaces.Board board's}.
  *
+ * @author David Oberacker
+ * @version 1.0.1
  */
 public class MoveFactoryImplementation implements MoveFactory {
 
+    /**
+     * Creates a new Instance of a {@link MoveFactoryImplementation}.
+     */
+    public MoveFactoryImplementation() {}
+
     @Override
     public Move flipRight(Position position) {
-        return new FilpRightMove(position);
+        return new FlipRightMove(position);
     }
 
     @Override
     public Move flipDown(Position position) {
-        return new FilpDownMove(position);
+        return new FlipDownMove(position);
     }
 
     @Override
@@ -34,5 +43,4 @@ public class MoveFactoryImplementation implements MoveFactory {
     public Move rotateRowRight(int rowIndex) {
         return new RotateRowRightMove(rowIndex);
     }
-
 }

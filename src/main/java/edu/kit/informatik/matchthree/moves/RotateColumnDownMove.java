@@ -12,20 +12,71 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * {@link Move} that allows to rotate all tokens in a column.
+ * <p>
+ * This move rotates all {@link edu.kit.informatik.matchthree.framework.Token tokens} at
+ * the given column either up or down.
+ * </p>
+ * <p>
+ * If the column isn't on the board the move isn't applicable.
+ * </p>
+ * <p>
+ * For this move, {@code Move.apply(board)} and {@code Move.reverse().apply(board)} return different results!
+ *
+ * </p>
+ * <p>
+ *     In normal mode the tokens rotate <b>down</b>, in reverse mode the tokens rotate <b>up</b>!
+ * </p>
+ *
  * @author David Oberacker
+ * @version 1.0.0
  */
 public class RotateColumnDownMove implements Move {
 
+    /**
+     * Index of the column that should be rotated.
+     */
     private final int coloumnIndex;
-    private final int direction;
 
+    /**
+     * Determines if the rotation should be reverse or not.
+     * <p>
+     * {@literal true - the column rotates reverse (up)}.
+     * </p>
+     * <p>
+     * {@literal false - the column rotates normal (down)}.
+     * </p>
+     */
+    private final boolean reverse;
+
+    /**
+     * Creates a new instance of the {@link RotateColumnDownMove}.
+     * <p>
+     * This {@link Move} is in normal mode and not in {@link Move#reverse() reverse mode}.
+     * </p>
+     *
+     * @param coloumnIndex
+     *         the index of the column that should be rotated.
+     */
     public RotateColumnDownMove(final int coloumnIndex) {
-        this(coloumnIndex, 1);
+        this(coloumnIndex, false);
     }
 
-    private RotateColumnDownMove(final int coloumnIndex, final int direction) {
+    /**
+     * Creates a new instance of the {@link RotateColumnDownMove}.
+     * <p>
+     * The mode of this move depends on the reverse parameter.
+     * (see: {@link RotateColumnDownMove#reverse}).
+     * </p>
+     *
+     * @param coloumnIndex
+     *         the index of the column that should be rotated.
+     * @param reverse
+     *         sets the direction of the move, see {@link RotateColumnDownMove#reverse}.
+     */
+    private RotateColumnDownMove(final int coloumnIndex, final boolean reverse) {
         this.coloumnIndex = coloumnIndex;
-        this.direction = direction;
+        this.reverse = reverse;
     }
 
     /**
@@ -56,23 +107,17 @@ public class RotateColumnDownMove implements Move {
         if (!canBeApplied(board)) {
             throw new BoardDimensionException("column not on board!");
         }
-        int count;
-        if (direction >= 0) {
-            count = 1;
-        } else {
-            count = board.getRowCount() -  1;
+        int count = 1;
+        if (reverse) {
+            count = board.getRowCount() - 1;
         }
         for (int cnt = 0; cnt < count; cnt++) {
             List<Token> columnTokens = new LinkedList<>();
-            for (int i = 0; i < board.getRowCount(); i++) {
+
+            columnTokens.add(board.getTokenAt(new Position(coloumnIndex, board.getRowCount() - 1)));
+            for (int i = 0; i < board.getRowCount() - 1; i++) {
                 columnTokens.add(board.getTokenAt(new Position(coloumnIndex, i)));
             }
-
-            Token temp = columnTokens.get(columnTokens.size() - 1);
-            for (int i = columnTokens.size() - 1; i > 0; i--) {
-                columnTokens.set(i, columnTokens.get(i - 1));
-            }
-            columnTokens.set(0, temp);
 
             for (int i = 0; i < board.getRowCount(); i++) {
                 board.setTokenAt(new Position(coloumnIndex, i), columnTokens.get(i));
@@ -91,7 +136,7 @@ public class RotateColumnDownMove implements Move {
      */
     @Override
     public Move reverse() {
-        return new RotateColumnDownMove(coloumnIndex, -1);
+        return new RotateColumnDownMove(coloumnIndex, true);
     }
 
     /**
@@ -108,7 +153,7 @@ public class RotateColumnDownMove implements Move {
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
         Set<Position> changedPositions = new HashSet<>();
-        for (int i = 0; i < board.getColumnCount() - 1; i++) {
+        for (int i = 0; i < board.getRowCount() - 1; i++) {
             changedPositions.add(new Position(coloumnIndex, i));
         }
         return changedPositions;

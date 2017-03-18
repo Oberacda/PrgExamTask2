@@ -12,20 +12,71 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * {@link Move} that allows to rotate all tokens in a row.
+ * <p>
+ * This move rotates all {@link edu.kit.informatik.matchthree.framework.Token tokens} at
+ * the given row either right or left.
+ * </p>
+ * <p>
+ * If the row isn't on the board the move isn't applicable.
+ * </p>
+ * <p>
+ * For this move, {@code Move.apply(board)} and {@code Move.reverse().apply(board)} return different results!
+ * </p>
+ * <p>
+ * In normal mode the tokens rotate <b>right</b>, in reverse mode the tokens rotate <b>left</b>!
+ * </p>
+ *
  * @author David Oberacker
+ * @version 1.0.0
  */
 public class RotateRowRightMove implements Move {
 
-    private final int rowIndex;
-    private final int direction;
 
+    /**
+     * Index of the row that should be rotated.
+     */
+    private final int rowIndex;
+
+    /**
+     * Determines if the rotation should be reverse or not.
+     * <p>
+     * {@literal true - the row rotates reverse (left)}.
+     * </p>
+     * <p>
+     * {@literal false - the row rotates normal (right)}.
+     * </p>
+     */
+    private final boolean reverse;
+
+    /**
+     * Creates a new instance of the {@link RotateRowRightMove}.
+     * <p>
+     * This {@link Move} is in normal mode and not in {@link Move#reverse() reverse mode}.
+     * </p>
+     *
+     * @param rowIndex
+     *         the index of the row that should be rotated.
+     */
     public RotateRowRightMove(final int rowIndex) {
-        this(rowIndex, 1);
+        this(rowIndex, false);
     }
 
-    private RotateRowRightMove(final int rowIndex, final int direction) {
+    /**
+     * Creates a new instance of the {@link RotateRowRightMove}.
+     * <p>
+     * The mode of this move depends on the reverse parameter.
+     * (see: {@link RotateColumnDownMove#reverse}).
+     * </p>
+     *
+     * @param rowIndex
+     *         the index of the row that should be rotated.
+     * @param reverse
+     *         sets the direction of the move, see {@link RotateRowRightMove#reverse}.
+     */
+    private RotateRowRightMove(final int rowIndex, final boolean reverse) {
         this.rowIndex = rowIndex;
-        this.direction = direction;
+        this.reverse = reverse;
     }
 
     /**
@@ -56,23 +107,17 @@ public class RotateRowRightMove implements Move {
         if (!canBeApplied(board)) {
             throw new BoardDimensionException("row not on board!");
         }
-        int count;
-        if (direction >= 0) {
-            count = 1;
-        } else {
-            count = board.getRowCount() -  1;
+        int count = 1;
+        if (reverse) {
+            count = board.getColumnCount() - 1;
         }
         for (int cnt = 0; cnt < count; cnt++) {
             List<Token> rowTokens = new LinkedList<>();
-            for (int i = 0; i < board.getRowCount(); i++) {
+
+            rowTokens.add(board.getTokenAt(new Position(board.getColumnCount() - 1, rowIndex)));
+            for (int i = 0; i < board.getColumnCount() - 1; i++) {
                 rowTokens.add(board.getTokenAt(new Position(i, rowIndex)));
             }
-
-            Token temp = rowTokens.get(rowTokens.size() - 1);
-            for (int i = rowTokens.size() - 1; i > 0; i--) {
-                rowTokens.set(i, rowTokens.get(i - 1));
-            }
-            rowTokens.set(0, temp);
 
             for (int i = 0; i < board.getRowCount(); i++) {
                 board.setTokenAt(new Position(i, rowIndex), rowTokens.get(i));
@@ -91,7 +136,7 @@ public class RotateRowRightMove implements Move {
      */
     @Override
     public Move reverse() {
-        return new RotateRowRightMove(rowIndex, -1);
+        return new RotateRowRightMove(rowIndex, true);
     }
 
     /**
