@@ -50,11 +50,20 @@ public class MaximumDeltaMatcher implements Matcher {
      *         or is either {@literal null} or contatins the delta {@literal "(0,0)"}.
      */
     public MaximumDeltaMatcher(Set<Delta> deltas) throws MatcherInitializationException {
+        if (deltas == null || deltas.size() < 1) {
+            throw new MatcherInitializationException("Set of deltas contains no deltas or is null!");
+        }
+        if (deltas.contains(null) || deltas.contains(new Delta(0,0))) {
+            throw new MatcherInitializationException("Set of deltas contains invalid deltas(null or (0,0))!");
+        }
         this.deltas = deltas;
     }
 
     @Override
     public Set<Set<Position>> match(Board board, Position initial) throws BoardDimensionException {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         if (! board.containsPosition(initial)) {
             throw new BoardDimensionException(String.format("the position \"%s\" isn't on the board!"
                     , initial.toString()));

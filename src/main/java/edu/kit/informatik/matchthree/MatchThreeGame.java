@@ -25,17 +25,16 @@ public class MatchThreeGame implements Game {
     private int score;
 
     /**
-     * @param board
-     * @param matcher
+     * @param board the board the game takes place on
+     * @param matcher the matcher used to find matches on the board
      */
     public MatchThreeGame(final Board board, final Matcher matcher) {
-        if (board != null && matcher != null) {
-            this.gameBoard = board;
-            //this.gameBoard.setFillingStrategy(new RandomStrategy());
-            this.moveMatcher = matcher;
-        } else {
-            throw new NullPointerException();
+        if (board == null || matcher == null) {
+            throw new IllegalArgumentException("Board or Matcher are null!");
         }
+
+        this.gameBoard = board;
+        this.moveMatcher = matcher;
     }
 
     @Override
@@ -47,8 +46,11 @@ public class MatchThreeGame implements Game {
 
     @Override
     public void acceptMove(final Move move) {
+        if (move == null) {
+            throw new IllegalArgumentException("Move is null!");
+        }
        if (!move.canBeApplied(this.gameBoard)) {
-           throw new BoardDimensionException("move not applicable on this board!");
+           throw new BoardDimensionException("Move not applicable on this board!");
        }
        move.apply(this.gameBoard);
        findMatches(move.getAffectedPositions(gameBoard));

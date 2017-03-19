@@ -5,8 +5,11 @@ import edu.kit.informatik.matchthree.framework.Delta;
 import edu.kit.informatik.matchthree.framework.DeterministicStrategy;
 import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.Token;
+import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
+import edu.kit.informatik.matchthree.framework.interfaces.Game;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
+import edu.kit.informatik.matchthree.moves.RotateColumnDownMove;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -62,5 +65,36 @@ public class MatchThreeGameTest {
         Move m = mfi.rotateColumnDown(1);
         game.acceptMove(m);
         System.out.println(game.getScore());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorExceptionTest1() throws Exception {
+        Set<Delta> deltas = new HashSet<>();
+        deltas.add(new Delta(0,1));
+        Game game = new MatchThreeGame(null, new MaximumDeltaMatcher(deltas));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorExceptionTest2() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("AB"), 2,2);
+        Game game = new MatchThreeGame(board, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void acceptMoveexceptionTest1() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("AB"), 2,2);
+        Set<Delta> deltas = new HashSet<>();
+        deltas.add(new Delta(0,1));
+        Game game = new MatchThreeGame(board, new MaximumDeltaMatcher(deltas));
+        game.acceptMove(null);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void acceptMoveexceptionTest2() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("AB"), 2,2);
+        Set<Delta> deltas = new HashSet<>();
+        deltas.add(new Delta(0,1));
+        Game game = new MatchThreeGame(board, new MaximumDeltaMatcher(deltas));
+        game.acceptMove(new RotateColumnDownMove(3));
     }
 }

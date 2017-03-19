@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 
 import edu.kit.informatik.matchthree.framework.*;
 import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
+import edu.kit.informatik.matchthree.framework.exceptions.IllegalTokenException;
+import edu.kit.informatik.matchthree.framework.exceptions.NoFillingStrategyException;
+import edu.kit.informatik.matchthree.framework.exceptions.TokenStringParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +40,6 @@ public class MatchThreeBoardTest {
     @Before
     public void setUp() throws Exception {
         b1.setFillingStrategy(new RandomStrategy());
-        b2.setFillingStrategy(new RandomStrategy());
         DeterministicStrategy deterministicStrategy
                 = new DeterministicStrategy(Token.iterator("A*A*A*A*A*A")
                 , Token.iterator("Y*A*A*Y*A*Y")
@@ -237,5 +239,107 @@ public class MatchThreeBoardTest {
         assertEquals(2, board.getColumnCount());
         assertEquals(3, board.getRowCount());
         assertEquals(Token.set("AB"), board.getAllValidTokens());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorExceptionTest1() throws Exception {
+        Board mtb = new MatchThreeBoard(Token.set("A"),2,2);
+
+    }
+
+    @Test(expected = TokenStringParseException.class)
+    public void constructorExceptionTest2() throws Exception {
+        Board mtb = new MatchThreeBoard(Token.set("AB"),"AB;AC;AB");
+
+    }
+
+    @Test(expected = TokenStringParseException.class)
+    public void constructorExceptionTest3() throws Exception {
+        Board mtb = new MatchThreeBoard(Token.set("AB"),"AB;A;AB");
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getTokenAtExceptionTest1() throws Exception {
+        b1.getTokenAt(null);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void getTokenAtExceptionTest2() throws Exception {
+        b1.getTokenAt(new Position(0,3));
+        b1.getTokenAt(new Position(3,0));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setTokenAtExceptionTest1() throws Exception {
+        b1.setTokenAt(null, new Token("A"));
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void setTokenAtExceptionTest2() throws Exception {
+        b1.setTokenAt(new Position(0,3), new Token("A"));
+        b1.setTokenAt(new Position(3,0), new Token("A"));
+    }
+
+    @Test(expected = IllegalTokenException.class)
+    public void setTokenAtExceptionTest3() throws Exception {
+        b1.setTokenAt(null, new Token("Ö"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void containsPositionExceptionTest() throws Exception {
+        b1.containsPosition(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void swapTokensExceptionTest1() throws Exception {
+        b1.swapTokens(null, new Position(0,0));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void swapTokensExceptionTest2() throws Exception {
+        b1.swapTokens(new Position(0,0), null);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void swapTokensExceptionTest3() throws Exception {
+        b1.swapTokens(new Position(0,0), new Position(3,0));
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void swapTokensExceptionTest4() throws Exception {
+        b1.swapTokens(new Position(3,0), new Position(0,0));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void removeTokensAtExceptionTest1() throws Exception {
+        Set<Position> positions = new HashSet<>();
+        positions.add(new Position(0,0));
+        positions.add(new Position(1,0));
+        positions.add(null);
+        positions.add(new Position(2,1));
+        positions.add(new Position(2,2));
+        b1.removeTokensAt(positions);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void removeTokensAtExceptionTest2() throws Exception {
+        Set<Position> positions = new HashSet<>();
+        positions.add(new Position(0,0));
+        positions.add(new Position(1,0));
+        positions.add(new Position(3,3));
+        positions.add(new Position(2,1));
+        positions.add(new Position(2,2));
+        b1.removeTokensAt(positions);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setFillingStrategyExceptionTest1() throws Exception {
+        b1.setFillingStrategy(null);
+    }
+
+    @Test(expected = NoFillingStrategyException.class)
+    public void fillWithTokensExceptionTest1() throws Exception {
+        b2.fillWithTokens();
     }
 }

@@ -3,6 +3,7 @@ package edu.kit.informatik.matchthree.tests.moves;
 import edu.kit.informatik.matchthree.MatchThreeBoard;
 import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.Token;
+import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 import edu.kit.informatik.matchthree.moves.RotateColumnDownMove;
@@ -34,4 +35,28 @@ public class RotateColumnDownMoveTest {
         assertThat(board.toTokenString(), is("*A+;Y**;+*="));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void applyExceptionTest1() throws Exception {
+        Move coloumn = new RotateColumnDownMove(0);
+        coloumn.apply(null);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void applyExceptionTest2() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("*A+=Y"), "*A+;Y**;+*=");
+        Move coloumn = new RotateColumnDownMove(3);
+        coloumn.apply(board);
+    }
+
+    @Test(expected = BoardDimensionException.class)
+    public void applyExceptionTest3() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("*A+=Y"), "*A+;Y**;+*=");
+        Move coloumn = new RotateColumnDownMove(-1);
+        coloumn.apply(board);
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void getAffectedPositionsExceptionTest1() throws Exception {
+        Move coloumn = new RotateColumnDownMove(0);
+        coloumn.getAffectedPositions(null);
+    }
 }

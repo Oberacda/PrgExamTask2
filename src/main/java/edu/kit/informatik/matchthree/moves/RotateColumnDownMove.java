@@ -90,6 +90,9 @@ public class RotateColumnDownMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         return board.getColumnCount() - 1 >= coloumnIndex;
     }
 
@@ -152,6 +155,9 @@ public class RotateColumnDownMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         Set<Position> changedPositions = new HashSet<>();
         for (int i = 0; i < board.getRowCount() - 1; i++) {
             changedPositions.add(new Position(coloumnIndex, i));

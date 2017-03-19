@@ -178,7 +178,7 @@ public class MatchThreeBoard implements Board {
     @Override
     public void setFillingStrategy(FillingStrategy strategy) {
         if (strategy == null) {
-            throw new IllegalArgumentException("Strategy is null!");
+            throw new NullPointerException("Filling strategy is null!");
         }
         this.boardFillingStrategy = strategy;
     }
@@ -298,7 +298,7 @@ public class MatchThreeBoard implements Board {
         if (!(boardTokens.size() >= minBoardSize
                 && (boardSummary.getMax() == boardSummary.getMin())
                 && boardSummary.getMax() >= minBoardSize)) {
-            throw new BoardDimensionException();
+            throw new TokenStringParseException("Token string doesn't match board size requirements!");
         }
 
         //Creates the tree map with a comparator for rows.

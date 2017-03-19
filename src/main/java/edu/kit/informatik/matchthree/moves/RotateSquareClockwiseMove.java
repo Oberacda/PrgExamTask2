@@ -20,7 +20,7 @@ import java.util.Set;
  *     <pre>
  *         ----------               ----------
  *         | A  | B  |              | C  | A  |
- *         -----------  -apply->    -----------
+ *         -----------  {@code -apply->}   -----------
  *         | C  | D  |              | D  | B  |
  *         -----------              -----------
  *     </pre>
@@ -73,6 +73,11 @@ public class RotateSquareClockwiseMove implements Move {
     private final Position positionD;
 
     /**
+     * Indicates if the move runs in normal or reverse mode.
+     */
+    private final boolean reverese;
+
+    /**
      *  Creates a new instance of the {@link RotateSquareClockwiseMove}.
      * <p>
      * This {@link Move} is in normal mode and not in {@link Move#reverse() reverse mode}.
@@ -84,10 +89,7 @@ public class RotateSquareClockwiseMove implements Move {
      * @param positionA the position all other positions are dependent on.
      */
     public RotateSquareClockwiseMove(final Position positionA) {
-        this(positionA,
-                positionA.plus(new Delta(1, 0)),
-                positionA.plus(new Delta(0, 1)),
-                positionA.plus(new Delta(1, 1)));
+        this(positionA,false);
     }
 
     /**
@@ -103,18 +105,19 @@ public class RotateSquareClockwiseMove implements Move {
      *     but are treated as if they had the order described above.
      * </p>
      * @param positionA {@link Position} representing position <b>A</b>
-     * @param positionB {@link Position} representing position <b>B</b>
-     * @param positionC {@link Position} representing position <b>C</b>
-     * @param positionD {@link Position} representing position <b>D</b>
+     * @param reverse indicates if the square rotates clockwise or counterclockwise.
      */
     private RotateSquareClockwiseMove(final Position positionA,
-                                      final Position positionB,
-                                      final Position positionC,
-                                      final Position positionD) {
+                                      boolean reverse) {
+        if (positionA == null) {
+            throw new IllegalArgumentException("Initial position is null!");
+        }
         this.positionA = positionA;
-        this.positionB = positionB;
-        this.positionC = positionC;
-        this.positionD = positionD;
+        this.positionB = positionA.plus(new Delta(1, 0));
+        this.positionC = positionA.plus(new Delta(0, 1));
+        this.positionD = positionA.plus(new Delta(1, 1));
+
+        this.reverese = reverse;
     }
 
     /**
@@ -128,6 +131,9 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         return board.containsPosition(positionA)
                 && board.containsPosition(positionB)
                 && board.containsPosition(positionC)
@@ -145,12 +151,19 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public void apply(final Board board) throws BoardDimensionException {
+        int count = 1;
         if (!canBeApplied(board)) {
             throw new BoardDimensionException("position not on board!");
         }
-        board.swapTokens(positionA, positionB);
-        board.swapTokens(positionC, positionD);
-        board.swapTokens(positionA, positionD);
+        if (reverese) {
+            count = 3;
+        }
+        while (count != 0) {
+            board.swapTokens(positionA, positionB);
+            board.swapTokens(positionC, positionD);
+            board.swapTokens(positionA, positionD);
+            count--;
+        }
     }
 
     /**
@@ -164,7 +177,7 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public Move reverse() {
-        return new RotateSquareClockwiseMove(positionB, positionA, positionD, positionC);
+        return new RotateSquareClockwiseMove(positionA, true);
     }
 
     /**
@@ -180,6 +193,9 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);

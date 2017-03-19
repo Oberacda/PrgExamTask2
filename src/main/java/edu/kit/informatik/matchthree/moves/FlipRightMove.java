@@ -52,6 +52,9 @@ public class FlipRightMove implements Move {
      *         move. All other required positions are dependent on this position.
      */
     public FlipRightMove(final Position position) {
+        if (position == null) {
+            throw new IllegalArgumentException("Position is null!");
+        }
         this.positionA = position;
         this.positionB = position.plus(new Delta(1,0));
     }
@@ -67,6 +70,9 @@ public class FlipRightMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         return board.containsPosition(positionA) && board.containsPosition(positionB);
     }
 
@@ -115,6 +121,9 @@ public class FlipRightMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);

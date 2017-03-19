@@ -90,6 +90,9 @@ public class RotateRowRightMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         return board.getRowCount() - 1 >= rowIndex;
     }
 
@@ -105,7 +108,7 @@ public class RotateRowRightMove implements Move {
     @Override
     public void apply(final Board board) throws BoardDimensionException {
         if (!canBeApplied(board)) {
-            throw new BoardDimensionException("row not on board!");
+            throw new BoardDimensionException("Row not on board!");
         }
         int count = 1;
         if (reverse) {
@@ -152,6 +155,9 @@ public class RotateRowRightMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
+        if (board == null) {
+            throw new IllegalArgumentException("Board is null!");
+        }
         Set<Position> changedPositions = new HashSet<>();
         for (int i = 0; i < board.getColumnCount() - 1; i++) {
             changedPositions.add(new Position(i, rowIndex));
