@@ -105,7 +105,7 @@ public class MatchThreeBoardTest {
         assertFalse(b1.containsPosition(new Position(-1,3)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void containsPosition2() throws Exception {
         b1.containsPosition(null);
     }
@@ -133,7 +133,7 @@ public class MatchThreeBoardTest {
         assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("A")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void swapTokens3() throws Exception {
         assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
         assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
@@ -259,7 +259,7 @@ public class MatchThreeBoardTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void getTokenAtExceptionTest1() throws Exception {
         b1.getTokenAt(null);
     }
@@ -270,7 +270,7 @@ public class MatchThreeBoardTest {
         b1.getTokenAt(new Position(3,0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void setTokenAtExceptionTest1() throws Exception {
         b1.setTokenAt(null, new Token("A"));
     }
@@ -286,17 +286,17 @@ public class MatchThreeBoardTest {
         b1.setTokenAt(null, new Token("Ö"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void containsPositionExceptionTest() throws Exception {
         b1.containsPosition(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void swapTokensExceptionTest1() throws Exception {
         b1.swapTokens(null, new Position(0,0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void swapTokensExceptionTest2() throws Exception {
         b1.swapTokens(new Position(0,0), null);
     }
@@ -311,7 +311,7 @@ public class MatchThreeBoardTest {
         b1.swapTokens(new Position(3,0), new Position(0,0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void removeTokensAtExceptionTest1() throws Exception {
         Set<Position> positions = new HashSet<>();
         positions.add(new Position(0,0));

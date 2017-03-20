@@ -6,10 +6,7 @@ import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionExceptio
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * {@link Move} that allows to rotate all tokens in a row.
@@ -90,9 +87,7 @@ public class RotateRowRightMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         return board.getRowCount() - 1 >= rowIndex;
     }
 
@@ -155,9 +150,7 @@ public class RotateRowRightMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         Set<Position> changedPositions = new HashSet<>();
         for (int i = 0; i < board.getColumnCount(); i++) {
             changedPositions.add(new Position(i, rowIndex));

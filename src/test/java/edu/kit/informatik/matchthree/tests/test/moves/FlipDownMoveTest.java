@@ -47,17 +47,17 @@ public class FlipDownMoveTest {
         rotate.apply(board);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void applyExceptionTest3() throws Exception {
         Move rotate = new FlipDownMove(new Position(1,0));
         rotate.apply(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorTest1() throws Exception {
         Move rotate = new FlipDownMove(null);
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void getAffectedPositionsTest1() throws Exception {
         Move rotate = new FlipDownMove(new Position(1,0));
         rotate.getAffectedPositions(null);

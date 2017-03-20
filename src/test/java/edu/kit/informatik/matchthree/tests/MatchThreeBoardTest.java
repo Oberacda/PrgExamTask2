@@ -83,7 +83,7 @@ public class MatchThreeBoardTest {
         new MatchThreeBoard(Token.set("AB"), "");
     }
 
-    @Test (expected = TokenStringParseException.class)
+    @Test (expected = BoardDimensionException.class)
     public void tokenStringConstructorInvalidString1() {
         
         new MatchThreeBoard(Token.set("AB"), "AB; ");
@@ -101,7 +101,7 @@ public class MatchThreeBoardTest {
         new MatchThreeBoard(Token.set("AB"), "AB;BA;;AB;");
     }
 
-    @Test (expected = TokenStringParseException.class)
+    @Test (expected = BoardDimensionException.class)
     public void tokenStringConstructorInvalidString4() {
         
         new MatchThreeBoard(Token.set("AB"), "BB;AAA");

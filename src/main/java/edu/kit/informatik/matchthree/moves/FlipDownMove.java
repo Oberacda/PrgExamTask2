@@ -7,6 +7,7 @@ import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -51,9 +52,7 @@ public class FlipDownMove implements Move {
      *         move. All other required positions are dependent on this position.
      */
     public FlipDownMove(final Position position) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position is null!");
-        }
+        Objects.requireNonNull(position, "Position is null!");
         this.positionA = position;
         this.positionB = position.plus(new Delta(0, 1));
     }
@@ -69,9 +68,7 @@ public class FlipDownMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         return board.containsPosition(positionA) && board.containsPosition(positionB);
     }
 
@@ -120,9 +117,7 @@ public class FlipDownMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);

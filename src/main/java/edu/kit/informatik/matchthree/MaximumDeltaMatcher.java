@@ -10,6 +10,7 @@ import edu.kit.informatik.matchthree.framework.interfaces.Matcher;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,8 +51,9 @@ public class MaximumDeltaMatcher implements Matcher {
      *         or is either {@literal null} or contatins the delta {@literal "(0,0)"}.
      */
     public MaximumDeltaMatcher(Set<Delta> deltas) throws MatcherInitializationException {
-        if (deltas == null || deltas.size() < 1) {
-            throw new MatcherInitializationException("Set of deltas contains no deltas or is null!");
+        Objects.requireNonNull(deltas, "Set of deltas is  null!");
+        if (deltas.size() < 1) {
+            throw new MatcherInitializationException("Set of deltas contains no deltas!");
         }
         if (deltas.contains(null) || deltas.contains(new Delta(0,0))) {
             throw new MatcherInitializationException("Set of deltas contains invalid deltas(null or (0,0))!");
@@ -60,10 +62,8 @@ public class MaximumDeltaMatcher implements Matcher {
     }
 
     @Override
-    public Set<Set<Position>> match(Board board, Position initial) throws BoardDimensionException {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+    public Set<Set<Position>> match(final Board board, final Position initial) throws BoardDimensionException {
+        Objects.requireNonNull(board, "Board is null!");
         if (! board.containsPosition(initial)) {
             throw new BoardDimensionException(String.format("the position \"%s\" isn't on the board!"
                     , initial.toString()));
@@ -105,7 +105,6 @@ public class MaximumDeltaMatcher implements Matcher {
     public Set<Set<Position>> matchAll(Board board, Set<Position> initial) throws BoardDimensionException {
         Set<Set<Position>> matches = new HashSet<>();
         for (Position p : initial) {
-            Set<Set<Position>> tmp = match(board, p);
             matches.addAll(this.match(board, p));
         }
         return matches;

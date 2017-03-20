@@ -78,7 +78,7 @@ public class MatchThreeBoard implements Board {
      * @param tokenString the token string the board should be build with.
      */
     public MatchThreeBoard(Set<Token> tokens, String tokenString) {
-        this.boardTokens = tokens;
+        this.boardTokens = Objects.requireNonNull(tokens, "Tokens is null!");
         if (this.boardTokens.size() < 2) {
             throw new IllegalArgumentException("Missing tokens! At least two tokens are required!");
         }
@@ -104,9 +104,7 @@ public class MatchThreeBoard implements Board {
 
     @Override
     public Token getTokenAt(Position position) throws BoardDimensionException {
-        if (position == null) {
-            throw new IllegalArgumentException("Position is null!");
-        }
+        Objects.requireNonNull(position, "Position is null!");
         if (!containsPosition(position)) {
             throw new BoardDimensionException(String.format("Position \"%s\" is not on the board!"
                     , position.toString()));
@@ -120,7 +118,7 @@ public class MatchThreeBoard implements Board {
             throw new IllegalTokenException(String.format("Unknown token \"%s\"!", newToken.toString()));
         }
         if (position == null) {
-            throw new IllegalArgumentException("Position is null!");
+            throw new NullPointerException("Position is null!");
         }
         if (!containsPosition(position)) {
             throw new BoardDimensionException(String.format("Position \"%s\" is not on the board!"
@@ -133,7 +131,7 @@ public class MatchThreeBoard implements Board {
     @Override
     public boolean containsPosition(Position position) {
         if (position == null) {
-            throw new IllegalArgumentException("Position is null!");
+            throw new NullPointerException("Position is null!");
         }
         return this.board.containsKey(position);
     }
@@ -177,10 +175,7 @@ public class MatchThreeBoard implements Board {
 
     @Override
     public void setFillingStrategy(FillingStrategy strategy) {
-        if (strategy == null) {
-            throw new NullPointerException("Filling strategy is null!");
-        }
-        this.boardFillingStrategy = strategy;
+        this.boardFillingStrategy = Objects.requireNonNull(strategy, "Filling strategy is null!");
     }
 
     @Override
@@ -231,6 +226,9 @@ public class MatchThreeBoard implements Board {
      * @return a token string representation of a empty board.
      */
     private static String createEmptyStringRepresentation(final int columnCount, final int rowCount) {
+        if (columnCount <= 1 || rowCount <= 1) {
+            throw new BoardDimensionException("Board is to small!");
+        }
         String tokenString = "";
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
@@ -263,7 +261,7 @@ public class MatchThreeBoard implements Board {
      */
     private TreeMap<Position, Optional<Token>> getBoardFromString(final String tokenString)
             throws TokenStringParseException, BoardDimensionException {
-
+        Objects.requireNonNull(tokenString, "Token string is null!");
         Scanner semicolonScanner = new Scanner(tokenString);
         semicolonScanner.useDelimiter(";");
         List<List<Optional<Token>>> boardTokens = new LinkedList<>();
@@ -289,6 +287,11 @@ public class MatchThreeBoard implements Board {
             }
         } catch (NoSuchElementException nse) {
             throw new TokenStringParseException("Missing tokens in string representation!");
+        }
+
+        semicolonScanner.useDelimiter(" ");
+        if(tokenString.endsWith(";")) {
+            throw new TokenStringParseException("Invalid token string!");
         }
 
         //Checks if board dimension is correct

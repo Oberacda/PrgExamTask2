@@ -9,14 +9,15 @@ import edu.kit.informatik.matchthree.framework.interfaces.Matcher;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * Class describing a {@link Game} played on a {@link MatchThreeBoard}.
  * <p>
- *     This game is played on a board and uses a {@link Matcher} to find
- *     matches and remove them from the board and reward the player with
- *     points for his score.
+ * This game is played on a board and uses a {@link Matcher} to find
+ * matches and remove them from the board and reward the player with
+ * points for his score.
  * </p>
  *
  * @author David Oberacker
@@ -37,8 +38,8 @@ public class MatchThreeGame implements Game {
     /**
      * The board the game takes place on.
      * <p>
-     *     This board has to have a {@link FillingStrategy} before the
-     *     {@link MatchThreeGame#initializeBoardAndStart()} method is called.
+     * This board has to have a {@link FillingStrategy} before the
+     * {@link MatchThreeGame#initializeBoardAndStart()} method is called.
      * </p>
      */
     private final Board gameBoard;
@@ -51,20 +52,20 @@ public class MatchThreeGame implements Game {
     /**
      * The score of the game.
      * <p>
-     *     It's updated everytime the {@link MatchThreeGame#findMatches(Set)} method
-     *     is called.
+     * It's updated everytime the {@link MatchThreeGame#findMatches(Set)} method
+     * is called.
      * </p>
      * <p>
-     *     score = &sum; matchScores
+     * score = &sum; matchScores
      * </p>
      * <p>
-     *     matchscore = &sum;<sub>k=1</sub> <sup>numOfChainReactions</sup> ( k * moveScore)
-     *     [numOfChainReactions is the number of chain reactions during the match evaluation]
+     * matchscore = &sum;<sub>k=1</sub> <sup>numOfChainReactions</sup> ( k * moveScore)
+     * [numOfChainReactions is the number of chain reactions during the match evaluation]
      * </p>
      * <p>
-     *     moveScore = &sum; {@link MatchThreeGame#SCORE_CONSTANT_3}
-     *     + (numOfTokensInMatch - {@link MatchThreeGame#SCORE_CONSTANT_3})
-     *     * {@link MatchThreeGame#SCORE_CONSTANT_2};
+     * moveScore = &sum; {@link MatchThreeGame#SCORE_CONSTANT_3}
+     * + (numOfTokensInMatch - {@link MatchThreeGame#SCORE_CONSTANT_3})
+     * * {@link MatchThreeGame#SCORE_CONSTANT_2};
      * </p>
      */
     private int score;
@@ -85,12 +86,8 @@ public class MatchThreeGame implements Game {
      *         the matcher used to find matches on the board
      */
     public MatchThreeGame(final Board board, final Matcher matcher) {
-        if (board == null || matcher == null) {
-            throw new IllegalArgumentException("Board or Matcher are null!");
-        }
-
-        this.gameBoard = board;
-        this.moveMatcher = matcher;
+        this.gameBoard = Objects.requireNonNull(board, "Board is null!");
+        this.moveMatcher = Objects.requireNonNull(matcher, "Matcher is null!");
     }
 
     @Override
@@ -98,7 +95,7 @@ public class MatchThreeGame implements Game {
         Set<Position> changedPositions = this.gameBoard.moveTokensToBottom();
         for (int i = 0; i < this.gameBoard.getColumnCount(); i++) {
             for (int j = 0; j < this.gameBoard.getRowCount(); j++) {
-                changedPositions.add(new Position(i,j));
+                changedPositions.add(new Position(i, j));
             }
         }
         this.gameBoard.fillWithTokens();
@@ -107,9 +104,7 @@ public class MatchThreeGame implements Game {
 
     @Override
     public void acceptMove(final Move move) {
-        if (move == null) {
-            throw new IllegalArgumentException("Move is null!");
-        }
+        Objects.requireNonNull(move, "Move is null!");
         if (!move.canBeApplied(this.gameBoard)) {
             throw new BoardDimensionException("Move not applicable on this board!");
         }
@@ -124,11 +119,7 @@ public class MatchThreeGame implements Game {
 
     @Override
     public void setMatcher(final Matcher matcher) {
-        if (matcher != null) {
-            this.moveMatcher = matcher;
-        } else {
-            throw new NullPointerException();
-        }
+        this.moveMatcher = Objects.requireNonNull(matcher, "Matcher is null!");
     }
 
     /**
@@ -154,7 +145,7 @@ public class MatchThreeGame implements Game {
     private void findMatches(Set<Position> changedPositions) {
         int moveScore = 0;
         int count = 1;
-
+        changedPositions = Objects.requireNonNull(changedPositions, "Set of changed positons is null!");
         Set<Set<Position>> matchedPositions = moveMatcher.matchAll(this.gameBoard, changedPositions);
 
         while (!matchedPositions.isEmpty()) {

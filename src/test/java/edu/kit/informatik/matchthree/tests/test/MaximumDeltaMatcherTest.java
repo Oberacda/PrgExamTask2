@@ -73,12 +73,12 @@ public class MaximumDeltaMatcherTest {
         deltas.add(new Delta(1,1));
         new MaximumDeltaMatcher(deltas);
     }
-    @Test(expected = MatcherInitializationException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorExceptionTest4() throws Exception {
         new MaximumDeltaMatcher(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void matchExceptionTest1() throws Exception {
         Set<Delta> deltaSet = new HashSet<>();
         deltaSet.add(new Delta(1,1));
@@ -86,7 +86,7 @@ public class MaximumDeltaMatcherTest {
         mdm.match(null, new Position(0,0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void matchExceptionTest2() throws Exception {
         Board board = new MatchThreeBoard(Token.set("n0*"), "n00;0*0;nn0");
         Set<Delta> deltaSet = new HashSet<>();

@@ -7,6 +7,7 @@ import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -52,9 +53,7 @@ public class FlipRightMove implements Move {
      *         move. All other required positions are dependent on this position.
      */
     public FlipRightMove(final Position position) {
-        if (position == null) {
-            throw new IllegalArgumentException("Position is null!");
-        }
+        Objects.requireNonNull(position, "Position is null!");
         this.positionA = position;
         this.positionB = position.plus(new Delta(1,0));
     }
@@ -70,9 +69,7 @@ public class FlipRightMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         return board.containsPosition(positionA) && board.containsPosition(positionB);
     }
 
@@ -90,7 +87,7 @@ public class FlipRightMove implements Move {
         if (canBeApplied(board)) {
             board.swapTokens(positionA, positionB);
         } else {
-            throw new BoardDimensionException("position not on board!");
+            throw new BoardDimensionException("Position not on board!");
         }
     }
 
@@ -121,9 +118,7 @@ public class FlipRightMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);

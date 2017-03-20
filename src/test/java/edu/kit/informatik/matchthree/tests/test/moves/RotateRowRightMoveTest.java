@@ -33,7 +33,7 @@ public class RotateRowRightMoveTest {
         assertThat(board.toTokenString(), is("*A+;Y**;+*="));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void applyExceptionTest1() throws Exception {
         Move coloumn = new RotateRowRightMove(0);
         coloumn.apply(null);
@@ -52,7 +52,7 @@ public class RotateRowRightMoveTest {
         Move coloumn = new RotateRowRightMove(-1);
         coloumn.apply(board);
     }
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void getAffectedPositionsExceptionTest1() throws Exception {
         Move coloumn = new RotateRowRightMove(0);
         coloumn.getAffectedPositions(null);

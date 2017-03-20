@@ -7,6 +7,7 @@ import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Move;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -109,9 +110,7 @@ public class RotateSquareClockwiseMove implements Move {
      */
     private RotateSquareClockwiseMove(final Position positionA,
                                       boolean reverse) {
-        if (positionA == null) {
-            throw new IllegalArgumentException("Initial position is null!");
-        }
+        Objects.requireNonNull(positionA, "Position is null!");
         this.positionA = positionA;
         this.positionB = positionA.plus(new Delta(1, 0));
         this.positionC = positionA.plus(new Delta(0, 1));
@@ -131,9 +130,7 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public boolean canBeApplied(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         return board.containsPosition(positionA)
                 && board.containsPosition(positionB)
                 && board.containsPosition(positionC)
@@ -193,9 +190,7 @@ public class RotateSquareClockwiseMove implements Move {
      */
     @Override
     public Set<Position> getAffectedPositions(final Board board) {
-        if (board == null) {
-            throw new IllegalArgumentException("Board is null!");
-        }
+        Objects.requireNonNull(board, "Board is null!");
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);
