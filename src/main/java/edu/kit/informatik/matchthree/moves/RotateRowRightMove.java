@@ -118,11 +118,11 @@ public class RotateRowRightMove implements Move {
             List<Token> rowTokens = new LinkedList<>();
 
             rowTokens.add(board.getTokenAt(new Position(board.getColumnCount() - 1, rowIndex)));
-            for (int i = 0; i < board.getColumnCount() - 1; i++) {
+            for (int i = 0; i < board.getColumnCount(); i++) {
                 rowTokens.add(board.getTokenAt(new Position(i, rowIndex)));
             }
 
-            for (int i = 0; i < board.getRowCount(); i++) {
+            for (int i = 0; i < board.getColumnCount(); i++) {
                 board.setTokenAt(new Position(i, rowIndex), rowTokens.get(i));
             }
         }
@@ -159,8 +159,11 @@ public class RotateRowRightMove implements Move {
             throw new IllegalArgumentException("Board is null!");
         }
         Set<Position> changedPositions = new HashSet<>();
-        for (int i = 0; i < board.getColumnCount() - 1; i++) {
+        for (int i = 0; i < board.getColumnCount(); i++) {
             changedPositions.add(new Position(i, rowIndex));
+        }
+        if (!changedPositions.stream().allMatch(board::containsPosition)) {
+            throw new BoardDimensionException("Position not on board!");
         }
         return changedPositions;
     }

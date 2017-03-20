@@ -159,8 +159,11 @@ public class RotateColumnDownMove implements Move {
             throw new IllegalArgumentException("Board is null!");
         }
         Set<Position> changedPositions = new HashSet<>();
-        for (int i = 0; i < board.getRowCount() - 1; i++) {
+        for (int i = 0; i < board.getRowCount(); i++) {
             changedPositions.add(new Position(coloumnIndex, i));
+        }
+        if (!changedPositions.stream().allMatch(board::containsPosition)) {
+            throw new BoardDimensionException("Position not on board!");
         }
         return changedPositions;
     }

@@ -1,345 +1,397 @@
 package edu.kit.informatik.matchthree.tests;
 
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-import edu.kit.informatik.matchthree.framework.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import edu.kit.informatik.matchthree.MatchThreeBoard;
+import edu.kit.informatik.matchthree.framework.DeterministicStrategy;
+import edu.kit.informatik.matchthree.framework.Position;
+import edu.kit.informatik.matchthree.framework.Token;
 import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
 import edu.kit.informatik.matchthree.framework.exceptions.IllegalTokenException;
 import edu.kit.informatik.matchthree.framework.exceptions.NoFillingStrategyException;
 import edu.kit.informatik.matchthree.framework.exceptions.TokenStringParseException;
-import org.junit.Before;
-import org.junit.Test;
-
-import edu.kit.informatik.matchthree.MatchThreeBoard;
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * An exemplary test for {@link Board}.
- * <p>
- * Tests whether the constructor of {@link MatchThreeBoard} creates an instance
- * that returns correct values for:
- * <ul>
- * <li>{@link Board#getColumnCount()},</li>
- * <li>{@link Board#getRowCount()},</li>
- * <li>{@link Board#getAllValidTokens()}.</li>
- * </ul>
+ * Tests for MatchThreeBoard
  * 
- * @author IPD Koziolek
+ * @author Micha Hanselmann
  */
 public class MatchThreeBoardTest {
-    Board b1 = new MatchThreeBoard(Token.set("A*+=Y"), 3,3);
-    Board b2 = new MatchThreeBoard(Token.set("A*+=Y"), 3,3);
-    Board b3 = new MatchThreeBoard(Token.set("A*Y"), 6,4);
-    Board b4 = new MatchThreeBoard(Token.set("A*+=Y"), 2,8);
-
-
-    @Before
-    public void setUp() throws Exception {
-        b1.setFillingStrategy(new RandomStrategy());
-        DeterministicStrategy deterministicStrategy
-                = new DeterministicStrategy(Token.iterator("A*A*A*A*A*A")
-                , Token.iterator("Y*A*A*Y*A*Y")
-                , Token.iterator("A*A*A*A*A*A")
-                , Token.iterator("Y*A*A*Y*A*Y")
-                , Token.iterator("A*A*A*A*A*A")
-                , Token.iterator("Y*A*A*Y*A*Y"));
-        b3.setFillingStrategy(deterministicStrategy);
-        b4.setFillingStrategy(new RandomStrategy());
-
-        b3.fillWithTokens();
-        b4.fillWithTokens();
-    }
 
     @Test
-    public void getAllValidTokens1() throws Exception {
-        assertThat(b1.getAllValidTokens(),is(Token.set("A*+=Y")));
-        assertThat(b2.getAllValidTokens(),is(Token.set("A*+=Y")));
-        assertThat(b3.getAllValidTokens(),is(Token.set("A*Y")));
-        assertThat(b4.getAllValidTokens(),is(Token.set("A*+=Y")));
-    }
-
-    @Test
-    public void getColumnCount1() throws Exception {
-        assertThat(b1.getColumnCount(),is(3));
-        assertThat(b2.getColumnCount(),is(3));
-        assertThat(b3.getColumnCount(),is(6));
-        assertThat(b4.getColumnCount(),is(2));
-    }
-
-    @Test
-    public void getRowCount1() throws Exception {
-        assertThat(b1.getRowCount(),is(3));
-        assertThat(b2.getRowCount(),is(3));
-        assertThat(b3.getRowCount(),is(4));
-        assertThat(b4.getRowCount(),is(8));
-    }
-
-    @Test
-    public void getTokenAt1() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
-        assertThat(b3.getTokenAt(new Position(2,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(3,3)), is(new Token("Y")));
-        assertThat(b3.getTokenAt(new Position(4,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(5,3)), is(new Token("Y")));
-
-    }
-
-    @Test
-    public void setTokenAt1() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
-        b3.setTokenAt(new Position(0,3), new Token("Y"));
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("Y")));
-    }
-
-    @Test
-    public void containsPosition1() throws Exception {
-        assertTrue(b1.containsPosition(new Position(0,0)));
-        assertTrue(b1.containsPosition(new Position(2,2)));
-        assertFalse(b1.containsPosition(new Position(3,2)));
-        assertFalse(b1.containsPosition(new Position(2,3)));
-        assertFalse(b1.containsPosition(new Position(-1,3)));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void containsPosition2() throws Exception {
-        b1.containsPosition(null);
-    }
-
-    @Test
-    public void moveTokensToBottom1() throws Exception {
-
-    }
-
-    @Test
-    public void swapTokens1() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
-        b3.swapTokens(new Position(0,3), new Position(1,3));
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("Y")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("A")));
-    }
-
-    @Test(expected = BoardDimensionException.class)
-    public void swapTokens2() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
-        b3.swapTokens(new Position(0,9), new Position(1,3));
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("Y")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("A")));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void swapTokens3() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
-        b3.swapTokens(null, new Position(1,3));
-        assertThat(b3.getTokenAt(new Position(0,3)), is(new Token("Y")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("A")));
-    }
-
-    @Test
-    public void removeTokensAt1() throws Exception {
-        assertThat(b3.getTokenAt(new Position(0,1)), is(new Token("A")));
-        assertThat(b3.getTokenAt(new Position(1,3)), is(new Token("Y")));
-        Set<Position> positionSet = new HashSet<>();
-        positionSet.add(new Position(0,1));
-        positionSet.add(new Position(1,3));
-        b3.removeTokensAt(positionSet);
-        assertNull(b3.getTokenAt(new Position(0,1)));
-        assertNull(b3.getTokenAt(new Position(1,3)));
-    }
-
-    @Test
-    public void getColumnCount() throws Exception {
-
-    }
-
-    @Test
-    public void getRowCount() throws Exception {
-
-    }
-
-    @Test
-    public void getTokenAt() throws Exception {
-
-    }
-
-    @Test
-    public void setTokenAt() throws Exception {
-
-    }
-
-    @Test
-    public void containsPosition() throws Exception {
-
-    }
-
-    @Test
-    public void moveTokensToBottom() throws Exception {
-        Board board = new MatchThreeBoard(Token.set("A+*Y"), "A AA;++  ; *A*;Y  Y");
-
-        assertEquals(4, board.getColumnCount());
-        assertEquals(4, board.getRowCount());
-        assertEquals(Token.set("A+*Y"), board.getAllValidTokens());
-        System.out.println(board.moveTokensToBottom());
-        System.out.println(board);
-    }
-
-    @Test
-    public void swapTokens() throws Exception {
-
-    }
-
-    @Test
-    public void removeTokensAt() throws Exception {
-
-    }
-
-    @Test
-    public void setFillingStrategy() throws Exception {
-
-    }
-
-    @Test
-    public void fillWithTokens() throws Exception {
-        Board board = new MatchThreeBoard(Token.set("A+*Y"), 5,5);
-        FillingStrategy strategy = new RandomStrategy();
-        board.setFillingStrategy(strategy);
-        board.fillWithTokens();
-        System.out.println(board);
-        board = new MatchThreeBoard(Token.set("A+*Y"), 4,4);
-        DeterministicStrategy detStrategy = new DeterministicStrategy(Token.iterator("A+*Y"));
-        detStrategy.setTokenIteratorForColumn(0, Token.iterator("A+*Y"));
-        detStrategy.setTokenIteratorForColumn(1, Token.iterator("A+*Y"));
-        detStrategy.setTokenIteratorForColumn(2, Token.iterator("A+*Y"));
-        detStrategy.setTokenIteratorForColumn(3, Token.iterator("A+*Y"));
-        board.setFillingStrategy(detStrategy);
-        board.fillWithTokens();
-        System.out.println(board);
-    }
-
-    @Test
-    public void toTokenString() throws Exception {
-
-    }
-
-    /**
-     * Tests the constructor and getters of {@link Board} on the instance
-     * created by {@code new MatchThreeBoard(Token.set("AB"), 2, 3);}.
-     */
-    @Test
-    public void testAB23() {
-        Board board = new MatchThreeBoard(Token.set("AB"), 2, 3);
-
+    public void basicConstructorTokensWidthHeight1() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), 2, 2);
+        
         assertEquals(2, board.getColumnCount());
-        assertEquals(3, board.getRowCount());
+        assertEquals(2, board.getRowCount());
         assertEquals(Token.set("AB"), board.getAllValidTokens());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void constructorExceptionTest1() throws Exception {
-        Board mtb = new MatchThreeBoard(Token.set("A"),2,2);
-
+    @Test
+    public void basicConstructorTokensWidthHeight2() {
+        
+        Board board = new MatchThreeBoard(Token.set("AAABBBCDEfg"), 20, 322);
+        
+        assertEquals(20, board.getColumnCount());
+        assertEquals(322, board.getRowCount());
+        assertEquals(Token.set("gfEDCBA"), board.getAllValidTokens());
     }
 
-    @Test(expected = TokenStringParseException.class)
-    public void constructorExceptionTest2() throws Exception {
-        Board mtb = new MatchThreeBoard(Token.set("AB"),"AB;AC;AB");
-
+    @Test (expected = BoardDimensionException.class)
+    public void basicConstructorInvalidColumns() {
+        
+        new MatchThreeBoard(Token.set("AB"), 1, 4);
     }
 
-    @Test(expected = TokenStringParseException.class)
-    public void constructorExceptionTest3() throws Exception {
-        Board mtb = new MatchThreeBoard(Token.set("AB"),"AB;A;AB");
-
+    @Test (expected = BoardDimensionException.class)
+    public void basicConstructorInvalidRows() {
+        
+        new MatchThreeBoard(Token.set("AB"), 4, 1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getTokenAtExceptionTest1() throws Exception {
-        b1.getTokenAt(null);
+    @Test
+    public void tokenStringConstructor1() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), "  ;  ");
+        
+        assertEquals(2, board.getColumnCount());
+        assertEquals(2, board.getRowCount());
     }
 
-    @Test(expected = BoardDimensionException.class)
-    public void getTokenAtExceptionTest2() throws Exception {
-        b1.getTokenAt(new Position(0,3));
-        b1.getTokenAt(new Position(3,0));
+    @Test
+    public void tokenStringConstructor2() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), " A ; B ;A B;   ; A ");
+        
+        assertEquals(3, board.getColumnCount());
+        assertEquals(5, board.getRowCount());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void setTokenAtExceptionTest1() throws Exception {
-        b1.setTokenAt(null, new Token("A"));
+    @Test (expected = BoardDimensionException.class)
+    public void tokenStringConstructorInvalidSize() {
+        
+        new MatchThreeBoard(Token.set("AB"), "");
     }
 
-    @Test(expected = BoardDimensionException.class)
-    public void setTokenAtExceptionTest2() throws Exception {
-        b1.setTokenAt(new Position(0,3), new Token("A"));
-        b1.setTokenAt(new Position(3,0), new Token("A"));
+    @Test (expected = TokenStringParseException.class)
+    public void tokenStringConstructorInvalidString1() {
+        
+        new MatchThreeBoard(Token.set("AB"), "AB; ");
     }
 
-    @Test(expected = IllegalTokenException.class)
-    public void setTokenAtExceptionTest3() throws Exception {
-        b1.setTokenAt(null, new Token("Ö"));
+    @Test (expected = TokenStringParseException.class)
+    public void tokenStringConstructorInvalidString2() {
+        
+        new MatchThreeBoard(Token.set("AB"), "AB;BA;AB;");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void containsPositionExceptionTest() throws Exception {
-        b1.containsPosition(null);
+    @Test (expected = TokenStringParseException.class)
+    public void tokenStringConstructorInvalidString3() {
+        
+        new MatchThreeBoard(Token.set("AB"), "AB;BA;;AB;");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void swapTokensExceptionTest1() throws Exception {
-        b1.swapTokens(null, new Position(0,0));
+    @Test (expected = TokenStringParseException.class)
+    public void tokenStringConstructorInvalidString4() {
+        
+        new MatchThreeBoard(Token.set("AB"), "BB;AAA");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void swapTokensExceptionTest2() throws Exception {
-        b1.swapTokens(new Position(0,0), null);
+    @Test (expected = TokenStringParseException.class)
+    public void tokenStringConstructorInvalidToken() {
+        
+        new MatchThreeBoard(Token.set("AB"), "AB ; C ;AB ");
+    }
+    
+    @Test
+    public void containsPosition() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), 3, 4);
+        
+        assertTrue(board.containsPosition(Position.at(0, 0)));
+        assertTrue(board.containsPosition(Position.at(2, 0)));
+        assertTrue(board.containsPosition(Position.at(0, 3)));
+        assertTrue(board.containsPosition(Position.at(2, 3)));
+        
+        assertFalse(board.containsPosition(Position.at(3, 3)));
+        assertFalse(board.containsPosition(Position.at(2, 4)));
+        assertFalse(board.containsPosition(Position.at(30, 3)));
+        assertFalse(board.containsPosition(Position.at(-1, 0)));
+        assertFalse(board.containsPosition(Position.at(0, -1)));
+        assertFalse(board.containsPosition(Position.at(-1, -2)));
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void containsPositionNullPointerException() {
+        
+        new MatchThreeBoard(Token.set("AB"), 3, 4).containsPosition(null);
+    }
+    
+    @Test
+    public void toTokenString() {
+        
+        assertEquals(" A ; B ;A B;   ; A ", 
+                new MatchThreeBoard(Token.set("AB"), " A ; B ;A B;   ; A ").toTokenString());
+        assertEquals("ABC ;   A;    ;CBBA;    ;A  B",
+                new MatchThreeBoard(Token.set("ABC"), "ABC ;   A;    ;CBBA;    ;A  B").toTokenString());
+        assertEquals("A   A  A B B B;BBB A  A B B B;A   A  BBB B B",
+                new MatchThreeBoard(Token.set("AB"), "A   A  A B B B;BBB A  A B B B;A   A  BBB B B").toTokenString());
+        assertEquals("   ;   ;   ;   ;   ;  A", 
+                new MatchThreeBoard(Token.set("AB"), "   ;   ;   ;   ;   ;  A").toTokenString());
+    }
+    
+    @Test
+    public void getTokenAt() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), "A B;  B; AA");
+        
+        assertEquals("A", board.getTokenAt(Position.at(0, 0)).toString());
+        assertNull(board.getTokenAt(Position.at(1, 0)));
+        assertEquals("B", board.getTokenAt(Position.at(2, 0)).toString());
+        assertNull(board.getTokenAt(Position.at(0, 1)));
+        assertNull(board.getTokenAt(Position.at(1, 1)));
+        assertEquals("B", board.getTokenAt(Position.at(2, 1)).toString());
+        assertNull(board.getTokenAt(Position.at(0, 2)));
+        assertEquals("A", board.getTokenAt(Position.at(1, 2)).toString());
+        assertEquals("A", board.getTokenAt(Position.at(2, 2)).toString());
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void getTokenAtInvalidPosition1() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).getTokenAt(Position.at(0, 3));
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void getTokenAtInvalidPosition2() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).getTokenAt(Position.at(-1, 1));
+    }
+    
+    @Test
+    public void setTokenAt() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), 3, 3);
+        Token a = new Token("A");
+        Token b = new Token("B");
+        
+        board.setTokenAt(Position.at(2, 1), a);
+        assertEquals(a, board.getTokenAt(Position.at(2, 1)));
+        board.setTokenAt(Position.at(2, 1), a);
+        assertEquals(a, board.getTokenAt(Position.at(2, 1)));
+        board.setTokenAt(Position.at(2, 1), b);
+        assertEquals(b, board.getTokenAt(Position.at(2, 1)));
+        board.setTokenAt(Position.at(2, 1), null);
+        assertNull(board.getTokenAt(Position.at(2, 1)));
+        
+        board.setTokenAt(Position.at(0, 0), b);
+        assertEquals(b, board.getTokenAt(Position.at(0, 0)));
+        board.setTokenAt(Position.at(2, 1), b);
+        assertEquals(b, board.getTokenAt(Position.at(2, 1)));
+        board.setTokenAt(Position.at(1, 0), a);
+        assertEquals(a, board.getTokenAt(Position.at(1, 0)));
+        board.setTokenAt(Position.at(1, 2), a);
+        assertEquals(a, board.getTokenAt(Position.at(1, 2)));
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void setTokenAtInvalidPosition1() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).setTokenAt(Position.at(0, 3), null);
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void setTokenAtInvalidPosition2() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).setTokenAt(Position.at(-1, 1), null);
+    }
+    
+    @Test (expected = IllegalTokenException.class)
+    public void setTokenAtInvalidToken() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).setTokenAt(Position.at(0, 0), new Token("C"));
+    }
+    
+    @Test
+    public void swapTokens() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), 3, 3);
+        Token a = new Token("A");
+        Token b = new Token("B");
+
+        board.setTokenAt(Position.at(0, 0), a);
+        board.setTokenAt(Position.at(1, 1), b);
+        assertEquals(a, board.getTokenAt(Position.at(0, 0)));
+        assertEquals(b, board.getTokenAt(Position.at(1, 1)));
+        
+        board.swapTokens(Position.at(0, 0), Position.at(1, 1));
+        assertEquals(b, board.getTokenAt(Position.at(0, 0)));
+        assertEquals(a, board.getTokenAt(Position.at(1, 1)));
+        
+        board.swapTokens(Position.at(0, 0), Position.at(1, 1));
+        assertEquals(a, board.getTokenAt(Position.at(0, 0)));
+        assertEquals(b, board.getTokenAt(Position.at(1, 1)));
+        
+        board.swapTokens(Position.at(2, 0), Position.at(1, 1));
+        assertEquals(a, board.getTokenAt(Position.at(0, 0)));
+        assertEquals(b, board.getTokenAt(Position.at(2, 0)));
+        assertNull(board.getTokenAt(Position.at(1, 1)));
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void swapTokensInvalidPosition1() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).swapTokens(Position.at(-1, 1), Position.at(0, 0));
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void swapTokensInvalidPosition2() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).swapTokens(Position.at(3, 1), Position.at(0, 0));
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void swapTokensInvalidPosition3() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).swapTokens(Position.at(0, 1), null);
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void swapTokensInvalidPosition4() {
+        new MatchThreeBoard(Token.set("AB"), 3, 3).swapTokens(null, null);
+    }
+    
+    @Test
+    public void removeTokensAt() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), "A B;  B; AA");
+        
+        board.removeTokensAt(Stream.of(
+                Position.at(0, 0), Position.at(2, 1), Position.at(1, 0)
+                ).collect(Collectors.toSet()));
+        assertEquals("  B;   ; AA", board.toTokenString());
+        
+        board.removeTokensAt(Stream.of(
+                Position.at(0, 0), Position.at(2, 1), Position.at(1, 0)
+                ).collect(Collectors.toSet()));
+        assertEquals("  B;   ; AA", board.toTokenString());
+        
+        board.removeTokensAt(Stream.of(
+                Position.at(2, 0)
+                ).collect(Collectors.toSet()));
+        assertEquals("   ;   ; AA", board.toTokenString());
+        
+        board.removeTokensAt(new HashSet<>());
+        assertEquals("   ;   ; AA", board.toTokenString());
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void removeTokensAtInvalidPosition1() {
+        new MatchThreeBoard(Token.set("AB"), "A B;  B; AA")
+            .removeTokensAt(null);
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void removeTokensAtInvalidPosition2() {
+        new MatchThreeBoard(Token.set("AB"), "A B;  B; AA")
+            .removeTokensAt(Stream.of(
+                    Position.at(-2, 0)
+            ).collect(Collectors.toSet()));
+    }
+    
+    @Test (expected = BoardDimensionException.class)
+    public void removeTokensAtInvalidPosition3() {
+        new MatchThreeBoard(Token.set("AB"), "A B;  B; AA")
+            .removeTokensAt(Stream.of(
+                    Position.at(0, 0), Position.at(0, 3)
+            ).collect(Collectors.toSet()));
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void removeTokensAtInvalidPosition4() {
+        new MatchThreeBoard(Token.set("AB"), "A B;  B; AA")
+            .removeTokensAt(Stream.of(
+                    Position.at(0, 0), Position.at(0, 1), null
+            ).collect(Collectors.toSet()));
+    }
+    
+    @Test
+    public void moveTokensToBottom1() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), "A B;  B; AA");
+        Set<Position> positions = board.moveTokensToBottom();
+        
+        Set<Position> expected = Stream.of(
+                Position.at(0, 0), /* -> */ Position.at(0, 2)
+                ).collect(Collectors.toSet());
+
+        assertEquals(expected, positions);
+        assertEquals("  B;  B;AAA", board.toTokenString());
+    }
+    
+    @Test
+    public void moveTokensToBottom2() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), "ABAB ;A    ;   BA; B  B; A  A");
+        Set<Position> positions = board.moveTokensToBottom();
+        
+        Set<Position> expected = Stream.of(
+                Position.at(0, 1), /* -> */ Position.at(0, 4),
+                Position.at(0, 0), /* -> */ Position.at(0, 3),
+                Position.at(1, 0), /* -> */ Position.at(1, 2),
+                Position.at(2, 0), /* -> */ Position.at(2, 4),
+                Position.at(3, 2), /* -> */ Position.at(3, 4),
+                Position.at(3, 0), /* -> */ Position.at(3, 3)
+                ).collect(Collectors.toSet());
+
+        assertEquals(expected, positions);
+        assertEquals("     ;     ; B  A;AB BB;AAABA", board.toTokenString());
+    }
+    
+    @Test
+    public void moveTokensToBottom3() {
+        
+        Board board = new MatchThreeBoard(Token.set("ABC"), "ABC ;    ;   A; B B;    ;  A ");
+        Set<Position> positions = board.moveTokensToBottom();
+        
+        Set<Position> expected = Stream.of(
+                Position.at(0, 0), /* -> */ Position.at(0, 5),
+                Position.at(1, 3), /* -> */ Position.at(1, 5),
+                Position.at(1, 0), /* -> */ Position.at(1, 4),
+                Position.at(2, 0), /* -> */ Position.at(2, 4),
+                Position.at(3, 3), /* -> */ Position.at(3, 5),
+                Position.at(3, 2), /* -> */ Position.at(3, 4)
+                ).collect(Collectors.toSet());
+
+        assertEquals(expected, positions);
+        assertEquals("    ;    ;    ;    ; BCA;ABAB", board.toTokenString());
+    }
+    
+    @Test
+    public void fillingStrategy1() {
+        
+        Board board = new MatchThreeBoard(Token.set("AB"), 3, 3);
+        board.setFillingStrategy(new DeterministicStrategy(Token.iterator("AAA"), Token.iterator("ABA"), Token.iterator("BAA")));
+        board.fillWithTokens();
+        
+        assertEquals("AAA;ABA;AAB", board.toTokenString());
+    }
+    
+    @Test
+    public void fillingStrategy2() {
+        
+        Board board = new MatchThreeBoard(Token.set("ABCD"), 4, 4);
+        board.setFillingStrategy(new DeterministicStrategy(Token.iterator("BCAD"), Token.iterator("CCCD"), Token.iterator("DADD"), Token.iterator("ABCD")));
+        board.fillWithTokens();
+        
+        assertEquals("DDDD;ACDC;CCAB;BCDA", board.toTokenString()); // back in black
+    }
+    
+    @Test (expected = NoFillingStrategyException.class)
+    public void noFillingStrategy() {
+        new MatchThreeBoard(Token.set("ABCD"), 4, 4).fillWithTokens();
     }
 
-    @Test(expected = BoardDimensionException.class)
-    public void swapTokensExceptionTest3() throws Exception {
-        b1.swapTokens(new Position(0,0), new Position(3,0));
-    }
-
-    @Test(expected = BoardDimensionException.class)
-    public void swapTokensExceptionTest4() throws Exception {
-        b1.swapTokens(new Position(3,0), new Position(0,0));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void removeTokensAtExceptionTest1() throws Exception {
-        Set<Position> positions = new HashSet<>();
-        positions.add(new Position(0,0));
-        positions.add(new Position(1,0));
-        positions.add(null);
-        positions.add(new Position(2,1));
-        positions.add(new Position(2,2));
-        b1.removeTokensAt(positions);
-    }
-
-    @Test(expected = BoardDimensionException.class)
-    public void removeTokensAtExceptionTest2() throws Exception {
-        Set<Position> positions = new HashSet<>();
-        positions.add(new Position(0,0));
-        positions.add(new Position(1,0));
-        positions.add(new Position(3,3));
-        positions.add(new Position(2,1));
-        positions.add(new Position(2,2));
-        b1.removeTokensAt(positions);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void setFillingStrategyExceptionTest1() throws Exception {
-        b1.setFillingStrategy(null);
-    }
-
-    @Test(expected = NoFillingStrategyException.class)
-    public void fillWithTokensExceptionTest1() throws Exception {
-        b2.fillWithTokens();
-    }
 }

@@ -23,7 +23,7 @@ public class MatchThreeBoard implements Board {
     /**
      * Minimal amount of rows and columns a board has to have.
      */
-    private static final Integer minBoardSize = 2;
+    private static final Integer MIN_BOARD_SIZE = 2;
 
     /**
      * All allowed tokens on the board.
@@ -259,7 +259,7 @@ public class MatchThreeBoard implements Board {
      *         the specified requirements this exception is called.
      * @throws BoardDimensionException
      *         if the specified token string defined a board that is smaller than
-     *         {@link MatchThreeBoard#minBoardSize} or the rows hae different sizes this exception is thrown.
+     *         {@link MatchThreeBoard#MIN_BOARD_SIZE} or the rows hae different sizes this exception is thrown.
      */
     private TreeMap<Position, Optional<Token>> getBoardFromString(final String tokenString)
             throws TokenStringParseException, BoardDimensionException {
@@ -295,10 +295,10 @@ public class MatchThreeBoard implements Board {
 
         IntSummaryStatistics boardSummary = boardTokens.parallelStream()
                 .flatMapToInt(optionals -> IntStream.of(optionals.size())).summaryStatistics();
-        if (!(boardTokens.size() >= minBoardSize
+        if (!(boardTokens.size() >= MIN_BOARD_SIZE
                 && (boardSummary.getMax() == boardSummary.getMin())
-                && boardSummary.getMax() >= minBoardSize)) {
-            throw new TokenStringParseException("Token string doesn't match board size requirements!");
+                && boardSummary.getMax() >= MIN_BOARD_SIZE)) {
+            throw new BoardDimensionException("Token string doesn't match board size requirements!");
         }
 
         //Creates the tree map with a comparator for rows.

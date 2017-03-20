@@ -201,6 +201,9 @@ public class RotateSquareClockwiseMove implements Move {
         changedPositions.add(positionB);
         changedPositions.add(positionC);
         changedPositions.add(positionD);
+        if (!changedPositions.stream().allMatch(board::containsPosition)) {
+            throw new BoardDimensionException("Position not on board!");
+        }
         return changedPositions;
     }
 }

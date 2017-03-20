@@ -10,13 +10,32 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Matcher to combine the results of two matcher
+ * and use both results as matched positions.
+ *
  * @author David Oberacker
+ * @version 1.0.1
  */
 public class MultiMatcher implements Matcher {
 
+    /**
+     * One of the two matchers that are evaluateted during the
+     * {@link MultiMatcher#match(Board, Position)} method.
+     */
     private final Matcher A;
+
+    /**
+     * One of the two matchers that are evaluateted during the
+     * {@link MultiMatcher#match(Board, Position)} method.
+     */
     private final Matcher B;
 
+    /**
+     * Creates a new multi matcher with two matches.
+     *
+     * @param A First matcher.
+     * @param B Seconf matcher.
+     */
     public MultiMatcher(final Matcher A, final Matcher B) {
         this.A = A;
         this.B = B;

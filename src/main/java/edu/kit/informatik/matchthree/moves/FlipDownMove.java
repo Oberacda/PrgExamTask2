@@ -126,6 +126,9 @@ public class FlipDownMove implements Move {
         Set<Position> changedPositions = new HashSet<>();
         changedPositions.add(positionA);
         changedPositions.add(positionB);
+        if (!changedPositions.stream().allMatch(board::containsPosition)) {
+            throw new BoardDimensionException("Position not on board!");
+        }
         return changedPositions;
     }
 }

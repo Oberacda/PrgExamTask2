@@ -68,33 +68,35 @@ public class MaximumDeltaMatcher implements Matcher {
             throw new BoardDimensionException(String.format("the position \"%s\" isn't on the board!"
                     , initial.toString()));
         }
+        Set<Set<Position>> result = new HashSet<>();
         Token tokenType = board.getTokenAt(initial);
         if (tokenType == null) {
-            return new HashSet<>();
+            result.add(new HashSet<>());
+            return result;
         }
 
         Set<Position> matchedPositions = new HashSet<>();
-        Set<Position> newMatchedPositons = new HashSet<>();
+        Set<Position> newMatchedPositions = new HashSet<>();
         matchedPositions.add(initial);
 
         do {
-            matchedPositions.addAll(newMatchedPositons);
-            newMatchedPositons.addAll(matchedPositions);
+            matchedPositions.addAll(newMatchedPositions);
+            newMatchedPositions.addAll(matchedPositions);
             for (Delta delta : this.deltas) {
                 for (Position position : matchedPositions) {
                     Position plusDelta = position.plus(delta);
                     Position minusDelta = position.plus(delta.scale(-1));
                     if (board.containsPosition(plusDelta) && tokenType.equals(board.getTokenAt(plusDelta))) {
-                        newMatchedPositons.add(plusDelta);
+                        newMatchedPositions.add(plusDelta);
                     }
                     if (board.containsPosition(minusDelta) && tokenType.equals(board.getTokenAt(minusDelta))) {
-                        newMatchedPositons.add(minusDelta);
+                        newMatchedPositions.add(minusDelta);
                     }
                 }
             }
-        } while (! matchedPositions.equals(newMatchedPositons));
+        } while (! matchedPositions.equals(newMatchedPositions));
 
-        Set<Set<Position>> result = new HashSet<>();
+
         result.add(matchedPositions);
         return result;
     }
@@ -103,6 +105,7 @@ public class MaximumDeltaMatcher implements Matcher {
     public Set<Set<Position>> matchAll(Board board, Set<Position> initial) throws BoardDimensionException {
         Set<Set<Position>> matches = new HashSet<>();
         for (Position p : initial) {
+            Set<Set<Position>> tmp = match(board, p);
             matches.addAll(this.match(board, p));
         }
         return matches;
