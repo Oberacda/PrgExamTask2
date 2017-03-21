@@ -8,6 +8,7 @@ import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionExceptio
 import edu.kit.informatik.matchthree.framework.exceptions.IllegalTokenException;
 import edu.kit.informatik.matchthree.framework.exceptions.NoFillingStrategyException;
 import edu.kit.informatik.matchthree.framework.exceptions.TokenStringParseException;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -112,7 +113,18 @@ public class MatchThreeBoardTest {
 
     @Test
     public void moveTokensToBottom1() throws Exception {
-
+        Board board = new MatchThreeBoard(Token.set("AB"), "ABAB;    ; A B");
+        Set<Position> changedPositions = new HashSet<>();
+        changedPositions.add(new Position(0,0));
+        changedPositions.add(new Position(1,0));
+        changedPositions.add(new Position(2,0));
+        changedPositions.add(new Position(3,0));
+        changedPositions.add(new Position(1,1));
+        changedPositions.add(new Position(3,1));
+        changedPositions.add(new Position(0,2));
+        changedPositions.add(new Position(2,2));
+        assertThat(board.moveTokensToBottom(), is(changedPositions));
+        assertEquals("    ; B B;AAAB", board.toTokenString());
     }
 
     @Test

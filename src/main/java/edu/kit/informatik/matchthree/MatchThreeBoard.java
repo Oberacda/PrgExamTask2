@@ -140,17 +140,19 @@ public class MatchThreeBoard implements Board {
     public Set<Position> moveTokensToBottom() {
         Set<Position> changedPositions = new LinkedHashSet<>();
         for (int i = 0; i < getColumnCount(); i++) {
-            for (int k = getRowCount() - 1; k >= 1; k--) {
-                for (int j = k - 1; j >= 0; j--) {
-                    Position currentPointer = new Position(i, k);
-                    Position nextPointer = new Position(i, j);
-                    Optional<Token> cnt = this.board.get(currentPointer);
-                    Optional<Token> nxt = this.board.get(nextPointer);
-                    if (nxt.isPresent() && !cnt.isPresent()) {
-                        this.board.put(nextPointer, Optional.empty());
-                        this.board.put(currentPointer, nxt);
-                        changedPositions.add(currentPointer);
-                        changedPositions.add(nextPointer);
+            for (int k = getRowCount() - 1; k >= 0; k--) {
+                Position cnt = new Position(i, k);
+                if (!(this.board.get(cnt).isPresent())) {
+                    for (int j = k; j >= 0; j--) {
+                        Position nxt = new Position(i, j);
+                        Optional<Token> nxtToken = this.board.get(nxt);
+                        if (nxtToken.isPresent()) {
+                            setTokenAt(cnt, nxtToken.get());
+                            setTokenAt(nxt, null);
+                            changedPositions.add(cnt);
+                            changedPositions.add(nxt);
+                            break;
+                        }
                     }
                 }
             }
@@ -226,7 +228,7 @@ public class MatchThreeBoard implements Board {
      * @return a token string representation of a empty board.
      */
     private static String createEmptyStringRepresentation(final int columnCount, final int rowCount) {
-        if (columnCount <= 1 || rowCount <= 1) {
+        if (columnCount < MIN_BOARD_SIZE || rowCount < MIN_BOARD_SIZE) {
             throw new BoardDimensionException("Board is to small!");
         }
         String tokenString = "";
