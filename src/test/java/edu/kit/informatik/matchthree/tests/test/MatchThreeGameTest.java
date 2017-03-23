@@ -5,15 +5,15 @@ import edu.kit.informatik.matchthree.framework.Delta;
 import edu.kit.informatik.matchthree.framework.DeterministicStrategy;
 import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.Token;
-import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
-import edu.kit.informatik.matchthree.framework.interfaces.Board;
-import edu.kit.informatik.matchthree.framework.interfaces.Game;
-import edu.kit.informatik.matchthree.framework.interfaces.Move;
+import edu.kit.informatik.matchthree.framework.interfaces.*;
 import edu.kit.informatik.matchthree.moves.RotateColumnDownMove;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author David Oberacker
@@ -96,5 +96,20 @@ public class MatchThreeGameTest {
         deltas.add(new Delta(0,1));
         Game game = new MatchThreeGame(board, new MaximumDeltaMatcher(deltas));
         game.acceptMove(new RotateColumnDownMove(3));
+    }
+
+    @Test
+    public void scoreCalcTestCase() throws Exception {
+        Board board = new MatchThreeBoard(Token.set("AB"), "AAA;AAA;AAA");
+        DeterministicStrategy deterministicStrategy = new DeterministicStrategy(Token.iterator("AAABAB"),
+                Token.iterator("AAAABA"),Token.iterator("AAABAB"));
+        board.setFillingStrategy(deterministicStrategy);
+        Matcher matcher = new MaximumDeltaMatcher(new HashSet<>(Arrays.asList(new Delta(0,1), new Delta(1,0))));
+        Game game = new MatchThreeGame(board, matcher);
+
+        MoveFactory mf = new MoveFactoryImplementation();
+
+        game.acceptMove(mf.flipRight(new Position(0,0)));
+        assertEquals(45, game.getScore());
     }
 }

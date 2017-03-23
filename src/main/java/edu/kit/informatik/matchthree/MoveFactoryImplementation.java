@@ -6,7 +6,7 @@ import edu.kit.informatik.matchthree.framework.interfaces.MoveFactory;
 import edu.kit.informatik.matchthree.moves.*;
 
 /**
- * A MoveFactoryImplementation proides {@link Move move's}
+ * A MoveFactoryImplementation provides {@link Move move's}
  * for {@link edu.kit.informatik.matchthree.framework.interfaces.Board board's}.
  *
  * @author David Oberacker
@@ -17,7 +17,7 @@ public class MoveFactoryImplementation implements MoveFactory {
     /**
      * Creates a new Instance of a {@link MoveFactoryImplementation}.
      */
-    public MoveFactoryImplementation() {}
+    public MoveFactoryImplementation() { }
 
     @Override
     public Move flipRight(Position position) {

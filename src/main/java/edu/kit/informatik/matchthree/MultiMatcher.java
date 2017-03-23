@@ -4,7 +4,6 @@ import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Matcher;
-import javafx.geometry.Pos;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,23 +21,23 @@ public class MultiMatcher implements Matcher {
      * One of the two matchers that are evaluateted during the
      * {@link MultiMatcher#match(Board, Position)} method.
      */
-    private final Matcher A;
+    private final Matcher matcherA;
 
     /**
      * One of the two matchers that are evaluateted during the
      * {@link MultiMatcher#match(Board, Position)} method.
      */
-    private final Matcher B;
+    private final Matcher matcherB;
 
     /**
-     * Creates a new multi matcher with two matches.
+     * Creates matcherA new multi matcher with two matches.
      *
      * @param A First matcher.
-     * @param B Seconf matcher.
+     * @param matcherB Seconf matcher.
      */
-    public MultiMatcher(final Matcher A, final Matcher B) {
-        this.A = A;
-        this.B = B;
+    public MultiMatcher(final Matcher A, final Matcher matcherB) {
+        this.matcherA = A;
+        this.matcherB = matcherB;
     }
 
     /**
@@ -59,8 +58,8 @@ public class MultiMatcher implements Matcher {
     public Set<Set<Position>> match(final Board board, final Position initial)
             throws BoardDimensionException {
         Set<Set<Position>> result = new HashSet<>();
-        result.addAll(A.match(board, initial));
-        result.addAll(B.match(board, initial));
+        result.addAll(matcherA.match(board, initial));
+        result.addAll(matcherB.match(board, initial));
         return result;
     }
 
@@ -68,7 +67,7 @@ public class MultiMatcher implements Matcher {
      * Returns all matches found on the board starting from the given
      * <strong>set of</strong> initial position.
      * <p>
-     * If one of the given positions is not contained in the board, a
+     * If one of the given positions is not contained in the board, matcherA
      * {@link BoardDimensionException} is thrown.
      *
      * @param board

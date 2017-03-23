@@ -90,7 +90,7 @@ public class RotateSquareClockwiseMove implements Move {
      * @param positionA the position all other positions are dependent on.
      */
     public RotateSquareClockwiseMove(final Position positionA) {
-        this(positionA,false);
+        this(positionA, false);
     }
 
     /**

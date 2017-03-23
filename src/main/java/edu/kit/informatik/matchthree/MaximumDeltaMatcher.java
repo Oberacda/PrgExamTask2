@@ -8,11 +8,9 @@ import edu.kit.informatik.matchthree.framework.exceptions.MatcherInitializationE
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
 import edu.kit.informatik.matchthree.framework.interfaces.Matcher;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A MaximumDeltaMatcher is a {@link Matcher}, which finds its matches
@@ -55,7 +53,7 @@ public class MaximumDeltaMatcher implements Matcher {
         if (deltas.size() < 1) {
             throw new MatcherInitializationException("Set of deltas contains no deltas!");
         }
-        if (deltas.contains(null) || deltas.contains(new Delta(0,0))) {
+        if (deltas.contains(null) || deltas.contains(new Delta(0, 0))) {
             throw new MatcherInitializationException("Set of deltas contains invalid deltas(null or (0,0))!");
         }
         this.deltas = deltas;
@@ -64,7 +62,7 @@ public class MaximumDeltaMatcher implements Matcher {
     @Override
     public Set<Set<Position>> match(final Board board, final Position initial) throws BoardDimensionException {
         Objects.requireNonNull(board, "Board is null!");
-        if (! board.containsPosition(initial)) {
+        if (!board.containsPosition(initial)) {
             throw new BoardDimensionException(String.format("the position \"%s\" isn't on the board!"
                     , initial.toString()));
         }
@@ -94,7 +92,7 @@ public class MaximumDeltaMatcher implements Matcher {
                     }
                 }
             }
-        } while (! matchedPositions.equals(newMatchedPositions));
+        } while (!matchedPositions.equals(newMatchedPositions));
 
 
         result.add(matchedPositions);

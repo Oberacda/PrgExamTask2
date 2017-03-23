@@ -14,6 +14,10 @@ import java.util.stream.IntStream;
 
 /**
  * Represents a {@link Board} for the {@link MatchThreeGame}.
+ * <p>
+ *     This board can only be filled with tokens
+ *     allowed during the constructor.
+ * </p>
  *
  * @author David Oberacker
  * @version 1.0.1
@@ -82,7 +86,7 @@ public class MatchThreeBoard implements Board {
         if (this.boardTokens.size() < 2) {
             throw new IllegalArgumentException("Missing tokens! At least two tokens are required!");
         }
-        this.board = getBoardFromString(tokenString);
+        this.board = getBoardFromString(tokens, tokenString);
     }
 
     @Override
@@ -244,10 +248,6 @@ public class MatchThreeBoard implements Board {
     /**
      * Uses a token string representation of a board to create a tree map of this board with
      * the tokens at their specified positions.
-     * <p>
-     * This method should only be called after the {@link MatchThreeBoard#boardTokens}
-     * field was set, or a {@link NullPointerException} is thrown!
-     * </p>
      *
      * @param tokenString
      *         the token string that should be displayed as a board
@@ -261,12 +261,13 @@ public class MatchThreeBoard implements Board {
      *         if the specified token string defined a board that is smaller than
      *         {@link MatchThreeBoard#MIN_BOARD_SIZE} or the rows hae different sizes this exception is thrown.
      */
-    private TreeMap<Position, Optional<Token>> getBoardFromString(final String tokenString)
+    private static TreeMap<Position, Optional<Token>> getBoardFromString(final Set<Token> boardTokens,
+                                                                  final String tokenString)
             throws TokenStringParseException, BoardDimensionException {
         Objects.requireNonNull(tokenString, "Token string is null!");
         Scanner semicolonScanner = new Scanner(tokenString);
         semicolonScanner.useDelimiter(";");
-        List<List<Optional<Token>>> boardTokens = new LinkedList<>();
+        List<List<Optional<Token>>> board = new LinkedList<>();
 
         // Read all rows from the token string.
         try {
@@ -274,40 +275,40 @@ public class MatchThreeBoard implements Board {
                 List<Optional<Token>> rowToken = new LinkedList<>();
                 String row = semicolonScanner.next();
                 for (Character c : row.toCharArray()) {
+                    //Checks if char is whitespace and iff adds empty field to board
                     if (c.equals('\u0020')) {
                         rowToken.add(Optional.empty());
                         continue;
                     }
+                    //Checks if char is a valid token and iff adds token to board
                     Token stringToken = new Token(c);
-                    if (this.boardTokens.parallelStream().anyMatch(stringToken::equals)) {
+                    if (boardTokens.parallelStream().anyMatch(stringToken::equals)) {
                         rowToken.add(Optional.of(stringToken));
                     } else {
                         throw new TokenStringParseException(String.format("Unknown token: \"%s\"", c));
                     }
                 }
-                boardTokens.add(rowToken);
+                board.add(rowToken);
             }
         } catch (NoSuchElementException nse) {
             throw new TokenStringParseException("Missing tokens in string representation!");
         }
 
-        semicolonScanner.useDelimiter(" ");
-        if(tokenString.endsWith(";")) {
-            throw new TokenStringParseException("Invalid token string!");
+        //Checks for wrong formatting
+        if (tokenString.endsWith(";")) {
+            throw new TokenStringParseException("Invalid token string, missing tokens!");
         }
 
         //Checks if board dimension is correct
-
-        IntSummaryStatistics boardSummary = boardTokens.parallelStream()
+        IntSummaryStatistics boardSummary = board.parallelStream()
                 .flatMapToInt(optionals -> IntStream.of(optionals.size())).summaryStatistics();
-        if (!(boardTokens.size() >= MIN_BOARD_SIZE
+        if (!(board.size() >= MIN_BOARD_SIZE
                 && (boardSummary.getMax() == boardSummary.getMin())
                 && boardSummary.getMax() >= MIN_BOARD_SIZE)) {
             throw new BoardDimensionException("Token string doesn't match board size requirements!");
         }
 
         //Creates the tree map with a comparator for rows.
-
         TreeMap<Position, Optional<Token>> result = new TreeMap<>((o1, o2) -> {
             if (Integer.compare(o1.y, o2.y) != 0) {
                 return Integer.compare(o1.y, o2.y);
@@ -317,9 +318,8 @@ public class MatchThreeBoard implements Board {
         });
 
         //Maps the List of Lists to a TreeMap.
-
-        for (int i = 0; i < boardTokens.size(); i++) {
-            List<Optional<Token>> tokenRow = boardTokens.get(i);
+        for (int i = 0; i < board.size(); i++) {
+            List<Optional<Token>> tokenRow = board.get(i);
             for (int j = 0; j < tokenRow.size(); j++) {
                 result.put(new Position(j, i), tokenRow.get(j));
             }

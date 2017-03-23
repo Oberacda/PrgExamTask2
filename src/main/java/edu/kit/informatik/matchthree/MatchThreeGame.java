@@ -1,6 +1,5 @@
 package edu.kit.informatik.matchthree;
 
-import edu.kit.informatik.matchthree.framework.FillingStrategy;
 import edu.kit.informatik.matchthree.framework.Position;
 import edu.kit.informatik.matchthree.framework.exceptions.BoardDimensionException;
 import edu.kit.informatik.matchthree.framework.interfaces.Board;
@@ -36,9 +35,15 @@ public class MatchThreeGame implements Game {
     private static final int SCORE_CONSTANT_2 = 2;
 
     /**
+     * Constant describing the min size of a match.
+     */
+    private static final int MIN_MATCH_SIZE = 3;
+
+    /**
      * The board the game takes place on.
      * <p>
-     * This board has to have a {@link FillingStrategy} before the
+     * This board has to have a
+     * {@link edu.kit.informatik.matchthree.framework.FillingStrategy} before the
      * {@link MatchThreeGame#initializeBoardAndStart()} method is called.
      * </p>
      */
@@ -127,30 +132,33 @@ public class MatchThreeGame implements Game {
      * {@link MatchThreeGame#moveMatcher} and if so removes them and
      * refills and evaluates the board again.
      * <p>
-     * Before this methode is called the board has to have a {@link FillingStrategy},
-     * or the methode call will fail.
+     * Before this methode is called the board has to have a
+     * {@link edu.kit.informatik.matchthree.framework.FillingStrategy;},
+     * or the method call will fail.
      * </p>
      * <p>
-     * This methode calculates the score of the move and the following chain reaction
+     * This method calculates the score of the move and the following chain reaction
      * and adds it to the {@link MatchThreeGame#score}.
      * </p>
+     * <p>
+     * If a position is not in the initial position set and is not reached during the evaluation
+     * of the matcher, it will not be evaluated, even if it would be a match.
+     * </p>
      *
-     * @param changedPositions
+     * @param initialPositions
      *         Changed positions on the board where the matcher starts its evaluation.
-     *         <p>
-     *         If a position is not in this set and is not reached during the evaluation
-     *         of the matcher, it will not be evaluated even if it would be a match.
-     *         </p>
      */
-    private void findMatches(Set<Position> changedPositions) {
+    private void findMatches(Set<Position> initialPositions) {
         int moveScore = 0;
         int count = 1;
-        changedPositions = Objects.requireNonNull(changedPositions, "Set of changed positons is null!");
-        Set<Set<Position>> matchedPositions = moveMatcher.matchAll(this.gameBoard, changedPositions);
+        Set<Position> changedPositions
+                = Objects.requireNonNull(initialPositions, "Set of changed positions is null!");
+        Set<Set<Position>> matchedPositions
+                = moveMatcher.matchAll(this.gameBoard, changedPositions);
 
         while (!matchedPositions.isEmpty()) {
             int matchScore = 0;
-            matchedPositions.removeIf(positions -> positions.size() < SCORE_CONSTANT_3);
+            matchedPositions.removeIf(positions -> positions.size() < MIN_MATCH_SIZE);
             changedPositions = new HashSet<>();
             for (Set<Position> match : matchedPositions) {
                 matchScore += SCORE_CONSTANT_3 + (match.size() - SCORE_CONSTANT_3) * SCORE_CONSTANT_2;

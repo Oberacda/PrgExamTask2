@@ -55,7 +55,7 @@ public class FlipRightMove implements Move {
     public FlipRightMove(final Position position) {
         Objects.requireNonNull(position, "Position is null!");
         this.positionA = position;
-        this.positionB = position.plus(new Delta(1,0));
+        this.positionB = position.plus(new Delta(1, 0));
     }
 
     /**
